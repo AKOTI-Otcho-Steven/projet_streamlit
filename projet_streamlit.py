@@ -16,11 +16,17 @@ if fichier_csv is not None:
    
 import duckdb
 
+# Chargement de data_frame
+data_frame = pd.read_csv("amazon_prime_titles.csv")
+
 # Connexion à une base DuckDB en mémoire (temporaire)
 connexion = duckdb.connect(database=':memory:')
 
+# Enregistrement de la data_frame dans le contexte DuckDB 
+connexion.register("data_frame_temp", data_frame)
+
 # Création d'une table "amazon_prime_titles" avec les données du DataFrame pandas
-connexion.execute("CREATE TABLE amazon_prime_titles AS SELECT * FROM df")
+connexion.execute("CREATE TABLE amazon_prime_titles AS SELECT * FROM data_frame_temp")
 
 # Interrogation des données
 
