@@ -110,6 +110,37 @@ kpi_type = alt.Chart(type_df).mark_arc(innerRadius=60).encode(
     tooltip=["type", "qty"]
 ).properties(height=300, title="🍩 Répartition Movie / TV Show")
 
+# KPI 3 : Top 10 pays (bulles)
+country_df = connexion.sql(f"""
+    WITH filt AS ({base_sql})
+    SELECT country, COUNT(*) AS qty
+    FROM filt
+    GROUP BY country
+    ORDER BY qty DESC
+    LIMIT 10
+""").df()
+
+kpi_country = alt.Chart(country_df).mark_circle().encode(
+    y=alt.Y("country:N", sort="-x", title="Pays"),
+    x=alt.X("qty:Q", title="Titres"),
+    size=alt.Size("qty:Q", legend=None),
+    tooltip=["country", "qty"]
+).properties(height=300, title="🔵 Top 10 pays (bulles)")
+
+# KPI 4 : Répartition par classification (aire)
+rating_df = connexion.sql(f"""
+    WITH filt AS ({base_sql})
+    SELECT rating, COUNT(*) AS qty
+    FROM filt
+    GROUP BY rating
+    ORDER BY rating
+""").df()
+
+kpi_rating = alt.Chart(rating_df).mark_area(interpolate="step-after").encode(
+    x=alt.X("rating:N", title="Classification"),
+    y=alt.Y("qty:Q", title="Titres"),
+    tooltip=["rating", "qty"]
+).properties(height=300, title="🏞️ Répartition par classification")
 
 
 
