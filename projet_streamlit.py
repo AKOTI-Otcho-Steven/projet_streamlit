@@ -74,6 +74,41 @@ if where_clauses:
 else:
     base_sql = "SELECT * FROM data_frame_temp"
 
+# ---------  Application des filtres ---------
+filtered_df = connexion.sql(base_sql).df()
+st.success(f"✅  Filtres appliqués • {len(filtered_df):,} lignes sélectionnées")
+
+# ---------  KPI & visualisations ---------
+st.markdown("###  Indicateurs clés (4 graphes distincts)")
+
+# KPI 1 : Titres par année (ligne)
+year_df = connexion.sql(f"""
+    WITH filt AS ({base_sql})
+    SELECT release_year AS year, COUNT(*) AS qty
+    FROM filt
+    GROUP BY year
+    ORDER BY year
+""").df()
+
+kpi_year = alt.Chart(year_df).mark_line(point=True).encode(
+    x=alt.X("year:O", title="Année de sortie"),
+    y=alt.Y("qty:Q", title="Nombre de titres"),
+    tooltip=["year", "qty"]
+).properties(height=300, title="📈 Titres par année")
+
+# KPI 2 : Répartition Movie / TV Show (donut)
+type_df = connexion.sql(f"""
+    WITH filt AS ({base_sql})
+    SELECT type, COUNT(*) AS qty
+    FROM filt
+    GROUP BY type
+""").df()
+
+kpi_type = alt.Chart(type_df).mark_arc(innerRadius=60).encode(
+    theta=alt.Theta("qty:Q", stack=True),
+    color=alt.Color("type:N", legend=None),
+    tooltip=["type", "qty"]
+).properties(height=300, title="🍩 Répartition Movie / TV Show")
 
 
 
