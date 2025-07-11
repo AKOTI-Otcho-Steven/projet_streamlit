@@ -142,6 +142,17 @@ kpi_rating = alt.Chart(rating_df).mark_area(interpolate="step-after").encode(
     tooltip=["rating", "qty"]
 ).properties(height=300, title="🏞️ Répartition par classification")
 
+# ---------  Affichage en grille 2×2 ---------
+col1, col2 = st.columns(2)
+with col1:
+    st.altair_chart(kpi_year, use_container_width=True)
+    st.altair_chart(kpi_country, use_container_width=True)
+with col2:
+    st.altair_chart(kpi_type, use_container_width=True)
+    st.altair_chart(kpi_rating, use_container_width=True)
+
+
+
 
 
 
