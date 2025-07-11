@@ -51,7 +51,29 @@ country_sel = st.sidebar.multiselect("Pays (country)", all_countries)
 
 # — Type
 all_types = sorted(data_frame["type"].unique())
-type_sel = st.sidebar.multiselect("Produit (type)", all_types)
+type_sel = st.sidebar.multiselect("Type", all_types)
+
+# --------- Construction dynamique du WHERE ---------
+where_clauses = []
+
+# Région
+if country_sel:
+    escaped_countries = [c.replace("'", "''") for c in country_sel]
+    country_list = ",".join(f"'{c}'" for c in escaped_countries)
+    where_clauses.append(f"country IN ({country_list})")
+
+# Type
+if type_sel:
+    escaped_types = [t.replace("'", "''") for t in type_sel]
+    type_list = ",".join(f"'{t}'" for t in escaped_types)
+    where_clauses.append(f"type IN ({type_list})")
+
+if where_clauses:
+    where_sql = " AND ".join(where_clauses)
+    base_sql = f"SELECT * FROM data_frame_temp WHERE {where_sql}"
+else:
+    base_sql = "SELECT * FROM data_frame_temp"
+
 
 
 
