@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import duckdb
+import altair as alt
 
 st.title("Application Web")
 
@@ -14,7 +16,6 @@ if fichier_csv is not None:
     st.write("Aperçu des données :")
     st.dataframe(df)                                                          #############################
    
-import duckdb
 
 # Chargement de data_frame
 data_frame = pd.read_csv("amazon_prime_titles.csv")
@@ -36,7 +37,21 @@ FROM amazon_prime_titles
 """
 
 result_df = connexion.execute(query).df()   # Résultat sous forme de DataFrame pandas
-st.dataframe(result_df)                     # Affichage du résultat
+#st.dataframe(result_df)                     # Affichage du résultat
+
+#######################################################
+
+
+st.sidebar.markdown("## Filtres")
+
+
+# — Pays (country)
+all_countries = sorted(data_frame["country"].dropna().unique())
+country_sel = st.sidebar.multiselect("Pays (country)", all_countries)
+
+# — Type
+all_types = sorted(data_frame["type"].unique())
+type_sel = st.sidebar.multiselect("Produit (type)", all_types)
 
 
 
