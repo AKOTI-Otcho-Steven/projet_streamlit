@@ -113,3 +113,5 @@ kpi_type = alt.Chart(type_df).mark_arc(innerRadius=60).encode(
 
 
 
+
+
