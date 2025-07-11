@@ -47,7 +47,7 @@ st.sidebar.markdown("## Filtres")
 
 # — Pays (country)
 all_countries = sorted(data_frame["country"].dropna().unique())
-country_sel = st.sidebar.multiselect("Pays (country)", all_countries)
+country_sel = st.sidebar.multiselect("Pays (Country)", all_countries)
 
 # — Type
 all_types = sorted(data_frame["type"].unique())
@@ -81,10 +81,10 @@ st.success(f"✅  Filtres appliqués • {len(filtered_df):,} lignes sélection
 # ---------  KPI & visualisations ---------
 st.markdown("###  Indicateurs clés (4 graphes distincts)")
 
-# KPI 1 : Titres par année (ligne)
+# KPI 1 : Movies / TV Shows par année (ligne)
 year_df = connexion.sql(f"""
     WITH filt AS ({base_sql})
-    SELECT release_year AS year, COUNT(*) AS qty
+    SELECT release_year AS year, COUNT(*) AS nombre
     FROM filt
     GROUP BY year
     ORDER BY year
@@ -92,55 +92,55 @@ year_df = connexion.sql(f"""
 
 kpi_year = alt.Chart(year_df).mark_line(point=True).encode(
     x=alt.X("year:O", title="Année de sortie"),
-    y=alt.Y("qty:Q", title="Nombre de titres"),
-    tooltip=["year", "qty"]
-).properties(height=300, title="📈 Titres par année")
+    y=alt.Y("nombre:Q", title="Nombre de Movies / TV Shows"),
+    tooltip=["year", "nombre"]
+).properties(height=300, title="📈 Movies / TV Shows par année")
 
 # KPI 2 : Répartition Movie / TV Show (donut)
 type_df = connexion.sql(f"""
     WITH filt AS ({base_sql})
-    SELECT type, COUNT(*) AS qty
+    SELECT type, COUNT(*) AS nombre
     FROM filt
     GROUP BY type
 """).df()
 
 kpi_type = alt.Chart(type_df).mark_arc(innerRadius=60).encode(
-    theta=alt.Theta("qty:Q", stack=True),
+    theta=alt.Theta("nombre:Q", stack=True),
     color=alt.Color("type:N", legend=None),
-    tooltip=["type", "qty"]
+    tooltip=["type", "nombre"]
 ).properties(height=300, title="🍩 Répartition Movie / TV Show")
 
 # KPI 3 : Top 10 pays (bulles)
 country_df = connexion.sql(f"""
     WITH filt AS ({base_sql})
-    SELECT country, COUNT(*) AS qty
+    SELECT country, COUNT(*) AS nombre
     FROM filt
     GROUP BY country
-    ORDER BY qty DESC
+    ORDER BY nombre DESC
     LIMIT 10
 """).df()
 
 kpi_country = alt.Chart(country_df).mark_circle().encode(
     y=alt.Y("country:N", sort="-x", title="Pays"),
-    x=alt.X("qty:Q", title="Titres"),
-    size=alt.Size("qty:Q", legend=None),
-    tooltip=["country", "qty"]
+    x=alt.X("nombre:Q", title="Nombre total de Movies / TV Shows"),
+    size=alt.Size("nombre:Q", legend=None),
+    tooltip=["country", "nombre"]
 ).properties(height=300, title="🔵 Top 10 pays (bulles)")
 
-# KPI 4 : Répartition par classification (aire)
+# KPI 4 : Répartition par note (rating)
 rating_df = connexion.sql(f"""
     WITH filt AS ({base_sql})
-    SELECT rating, COUNT(*) AS qty
+    SELECT rating, COUNT(*) AS nombre
     FROM filt
     GROUP BY rating
     ORDER BY rating
 """).df()
 
 kpi_rating = alt.Chart(rating_df).mark_area(interpolate="step-after").encode(
-    x=alt.X("rating:N", title="Classification"),
-    y=alt.Y("qty:Q", title="Titres"),
-    tooltip=["rating", "qty"]
-).properties(height=300, title="🏞️ Répartition par classification")
+    x=alt.X("rating:N", title="Note"),
+    y=alt.Y("nombre:Q", title="Total"),
+    tooltip=["rating", "nombre"]
+).properties(height=300, title="🏞️ Répartition par note")
 
 # ---------  Affichage en grille 2×2 ---------
 col1, col2 = st.columns(2)
@@ -153,7 +153,7 @@ with col2:
     
 # ---------  Aperçu des données filtrées ---------
 with st.expander("Afficher un aperçu du DataFrame filtré"):
-    st.dataframe(filtered_df.head())
+    st.dataframe(filtered_df)
 
 #########################################################
 
