@@ -23,7 +23,7 @@ data_frame = pd.read_csv("amazon_prime_titles.csv")
 # Connexion à une base DuckDB en mémoire (temporaire)
 connexion = duckdb.connect(database=':memory:')
 
-# Enregistrement de la data_frame dans le contexte DuckDB 
+# Enregistrement de la data_frame dans le contexte DuckDB
 connexion.register("data_frame_temp", data_frame)
 
 # Création d'une table "amazon_prime_titles" avec les données du DataFrame pandas
@@ -52,10 +52,6 @@ country_sel = st.sidebar.multiselect("Pays (country)", all_countries)
 # — Type
 all_types = sorted(data_frame["type"].unique())
 type_sel = st.sidebar.multiselect("Produit (type)", all_types)
-
-
-
-
 
 
 
