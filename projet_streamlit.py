@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import duckdb
+import altair as alt
 
 st.title("Application Web")
 
@@ -14,7 +16,6 @@ if fichier_csv is not None:
     st.write("Aperçu des données :")
     st.dataframe(df)                                                          #############################
    
-import duckdb
 
 # Chargement de data_frame
 data_frame = pd.read_csv("amazon_prime_titles.csv")
@@ -22,7 +23,7 @@ data_frame = pd.read_csv("amazon_prime_titles.csv")
 # Connexion à une base DuckDB en mémoire (temporaire)
 connexion = duckdb.connect(database=':memory:')
 
-# Enregistrement de la data_frame dans le contexte DuckDB 
+# Enregistrement de la data_frame dans le contexte DuckDB
 connexion.register("data_frame_temp", data_frame)
 
 # Création d'une table "amazon_prime_titles" avec les données du DataFrame pandas
@@ -36,12 +37,5 @@ FROM amazon_prime_titles
 """
 
 result_df = connexion.execute(query).df()   # Résultat sous forme de DataFrame pandas
-st.dataframe(result_df)                     # Affichage du résultat
-
-
-
-
-
-
-
+#st.dataframe(result_df)                     # Affichage du résultat
 
