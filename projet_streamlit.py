@@ -150,6 +150,13 @@ with col1:
 with col2:
     st.altair_chart(kpi_type, use_container_width=True)
     st.altair_chart(kpi_rating, use_container_width=True)
+    
+# ---------  Aperçu des données filtrées ---------
+with st.expander("Afficher un aperçu du DataFrame filtré"):
+    st.dataframe(filtered_df.head())
+
+#########################################################
+
 
 
 
